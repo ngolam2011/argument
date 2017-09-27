@@ -3,6 +3,8 @@ package com.objectmentor.utilities.args;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import com.objectmentor.utilities.args.ArgsException.ErrorCode;
+
 public class IntegerArgumentMarshaler implements ArgumentMarshaler {
 	private int intValue = 0;
 
@@ -13,9 +15,9 @@ public class IntegerArgumentMarshaler implements ArgumentMarshaler {
 			parameter = currentArgument.next();
 			intValue = Integer.parseInt(parameter);
 		} catch (NoSuchElementException e) {
-			throw new ArgsException(MISSING_INTEGER);
+			throw new ArgsException(ErrorCode.MISSING_INTEGER);
 		} catch (NumberFormatException e) {
-			throw new ArgsException(INVALID_INTEGER, parameter);
+			throw new ArgsException(ErrorCode.INVALID_INTEGER, parameter);
 		}
 	}
 

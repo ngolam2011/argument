@@ -1,6 +1,8 @@
 package com.objectmentor.utilities.args;
 
 import java.util.Arrays;
+
+import com.objectmentor.utilities.args.ArgsException.ErrorCode;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -14,8 +16,8 @@ public class Args {
 	private ListIterator<String> currentArgument;
 
 	public Args(String schema, String[] args) throws ArgsException {
-		marharlers = new HashMap<Character, ArgumentMarshaler>();
-		argsFound = new HashSet<Character>();
+		marharlers = new HashMap<>();
+		argsFound = new HashSet<>();
 		parseSchema(schema);
 		parseArgumentStrings(Arrays.asList(args));
 	}
@@ -27,7 +29,7 @@ public class Args {
 
 	}
 
-	private void parseSchemaElement(String element) throws ArgsExeption {
+	private void parseSchemaElement(String element) throws ArgsException {
 		char elementId = element.charAt(0);
 		String elementTail = element.substring(1);
 		validateSchemaElementId(elementId);
@@ -42,12 +44,12 @@ public class Args {
 		else if (elementTail.equals("[*]"))
 			marharlers.put(elementId, new StringArrayArgumentMashaler());
 		else
-			throw new ArgsException(INVALID_ARGUMENT_FORMAT, elementId, elementTail);
+			throw new ArgsException(ErrorCode.INVALID_ARGUMENT_FORMAT, elementId, elementTail);
 	}
 
 	private void validateSchemaElementId(char elementId) throws ArgsException {
 		if (!Character.isLetter(elementId))
-			throw new ArgsException(INVALID_ARGUMENT_FORMAT, elementId, elementTail);
+			throw new ArgsException(ErrorCode.INVALID_ARGUMENT_FORMAT, elementId, null);
 	}
 
 	private void parseArgumentStrings(List<String> argsList) throws ArgsException {
@@ -64,13 +66,13 @@ public class Args {
 
 	private void parseArgumentCharacters(String argChars) throws ArgsException {
 		for (int i = 0; i < argChars.length(); i++)
-			parseArgumentCharacter(argChars.charAt(i))
+			parseArgumentCharacter(argChars.charAt(i));
 	}
 
 	private void parseArgumentCharacter(char argChar) throws ArgsException {
 		ArgumentMarshaler m = marharlers.get(argChar);
-		if (m = nlll) {
-			throw new ArgsException(UNEXPECTED_ARGUMENT, argChar, null);
+		if (m == null) {
+			throw new ArgsException(ErrorCode.UNEXPECTED_ARGUMENT, argChar, null);
 		} else {
 			argsFound.add(argChar);
 			try {
@@ -91,7 +93,7 @@ public class Args {
 	}
 
 	public boolean getBoolean(char agr) {
-		return BooleanArgumentMarshaler.getValue(marshalers.get(agr));
+		return BooleanArgumentMarshaler.getValue(marharlers.get(agr));
 	}
 
 	public String getString(char arg) {
@@ -99,10 +101,11 @@ public class Args {
 	}
 
 	public double getDouble(char arg) {
-		return DoubleArgumentMarshaler.getValue(marshalers.get(arg));
+		return DoubleArgumentMarshaler.getValue(marharlers.get(arg));
 	}
 
 	public String[] getStringArray(char arg) {
-		return StringArrayArgumentMarshaler.getValue(marshalers.get(arg));
+		return StringArrayArgumentMashaler.getValue(marharlers.get(arg));
 	}
+
 }
